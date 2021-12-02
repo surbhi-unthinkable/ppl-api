@@ -1,3 +1,4 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
@@ -55,7 +56,7 @@ const EmployeeSchema = new mongoose.Schema({
 EmployeeSchema.methods.generateAuthToken = async function(){
     try {
         console.log(this._id);
-        const token = jwt.sign({_id: this._id.toString()}, process.env.SECREt_KEY);
+        const token = jwt.sign({_id: this._id.toString()}, process.env.SECRET_KEY);
         this.tokens = this.tokens.concat({token: token});
         await this.save();
         return token;
@@ -73,7 +74,7 @@ EmployeeSchema.pre("save", async function(next){
         console.log(`The current password is ${this.password}`);
         this.password = await bcrypt.hash(this.password, 10);
         console.log(`The current password is ${this.password}`);
-        this.confmPass = undefined;
+        this.confirmPassword = undefined;
     }
 
     next();
@@ -83,11 +84,3 @@ EmployeeSchema.pre("save", async function(next){
 const Register = new mongoose.model('Register', EmployeeSchema);
 module.exports = Register;
 
-// const joi = require("joi");
-
-// const schema = joi.object({
-//     firstName: joi.string().required(),
-//     lastname: joi.string().required(),
-//     email: joi.string(),
-//     password: joi.string().lowercase().uppercase().alphanum()
-// })

@@ -9,14 +9,14 @@ exports.login = async function(req, res) {
         const password = req.body.password;
 
         const userEmail = await Register.findOne({email: email});
-        const isMatch = await bcrypt.compare(password, userEmail.password);        
+        if (!userEmail){
+            res.status(400).send("Email/ password not matching!!");
+            return;
+        }
 
-        // const token = await userEmail.generateAuthToken();
+        const hashedPassword = await bcrypt.hash(userEmail.password, 10)
+        const isMatch = await bcrypt.compare(password, hashedPassword);        
 
-        // res.cookie("jwt", token, {
-        //     httpOnly: true
-        // })
-        console.log(password, userEmail.password, email, userEmail.email);
 
         if(isMatch) {
             res.status(201).send(userEmail);

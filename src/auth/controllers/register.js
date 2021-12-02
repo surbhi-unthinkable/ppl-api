@@ -23,13 +23,12 @@ exports.register = async function(req, res){
             email,
             dob,
             phoneNumber,
-            password
+            password,
+            confirmPassword
         });
         
-        // const token = await user.generateAuthtoken();
-        // res.cookie("jwt", token, {
-        //     httpOnly: true
-        // });
+        // const token = await user.generateAuthToken();
+        // console.log("token part", token);
 
         const createUser = await user.save();
         res.status(201).send(createUser);
