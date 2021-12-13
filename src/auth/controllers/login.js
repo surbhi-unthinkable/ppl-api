@@ -1,5 +1,5 @@
 require("dotenv").config();
-const Register = require('../models/Register');
+const Register = require('../models/Auth');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 

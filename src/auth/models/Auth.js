@@ -34,14 +34,16 @@ const EmployeeSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        minlength: 8,
-        maxlength: 15
+        minlength: 8
     },
     confirmPassword: {
         type: String,
         required: true,
-        minlength: 8,
-        maxlength: 15
+        minlength: 8
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     },
     tokens: [{
         token: {
@@ -56,8 +58,9 @@ const EmployeeSchema = new mongoose.Schema({
 EmployeeSchema.methods.generateAuthToken = async function(){
     try {
         console.log(this._id);
-        const token = jwt.sign({_id: this._id.toString()}, process.env.SECRET_KEY);
+        const token = jwt.sign({_id: this._id.toString()}, "workingonpplsocialsiteapirightnow");
         this.tokens = this.tokens.concat({token: token});
+        console.log("Token:",token);
         await this.save();
         return token;
 
