@@ -10,6 +10,9 @@ router.post('/uploadfile', postAuth.uploadFile);
 router.post('/uploadfiles',postAuth.uploadFiles);
 router.put('/uploadprofile/:id', postAuth.uploadProfile);
 router.get('/get/:id', postAuth.getUser);
+router.put('/updatepost/:id', postAuth.updatePost);
+router.put('/like/:id', postAuth.likePost);
+router.put('/dislike/:id', postAuth.dislikePost);
 // router.post('/uploadfiles', postAuth.uplaodFiles);
 
 module.exports = router;
