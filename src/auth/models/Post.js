@@ -11,23 +11,19 @@ const PostSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    unlikeCount: {
+    unlikedCount: {
         type: Number,
         default: 0
     },
-    LikeArray: {
+    likeUserId: {
         type: Array,
         default: []
     },
-    unlikeArray: {
+    unlikeUserId: {
         type: Array,
         default: []
     },
-    following: {
-        type: Array,
-        default: []
-    },
-    follower: {
+    comment: {
         type: Array,
         default: []
     },

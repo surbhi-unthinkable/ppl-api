@@ -307,24 +307,17 @@ exports.getUser = async function (req, res) {
     }
 }
 
+
 // Like post
 exports.likePost = async function (req, res) {
     try {
         const post = await Post.findById({ _id: req.params.id });
+        const hasLiked = post.likeUserId.includes(req.body.userId);
+        const hasUnliked = post.unlikeUserId.includes(req.body.userId);
 
-        if (!post.likeArray.includes(req.body.userId)) {
-            await Post.update(
-                { $push: { likeArray: req.body.userId } },
-                { $inc: { likesCount: req.body.likesCount + 1 } }
-            )
-        }
+        addRemoveLike(post, hasLiked, hasUnliked, req.body.userId, true);
 
-        if (post.unlikeArray.includes(req.body.userId)) {
-            await Post.update(
-                { $pull: { unlikeArray: req.body.userId } },
-                { $inc: { unlikeCount: req.body.unlikeCount - 1 } }
-            )
-        }
+        res.status(200).send("Liked successfully!!");
 
     } catch (error) {
         res.status(500).send(error);
@@ -332,23 +325,152 @@ exports.likePost = async function (req, res) {
 }
 
 // Dislike post
-exports.dislikePost = async function (req, res) {
+exports.unlikePost = async function (req, res) {
     try {
         const post = await Post.findById({ _id: req.params.id });
+        const hasLiked = post.likeUserId.includes(req.body.userId);
+        const hasUnliked = post.unlikeUserId.includes(req.body.userId);
 
-        if (!post.unlikeArray.includes(req.body.userId)) {
-            await Post.update(
-                { $push: { unlikeArray: req.body.userId } },
-                { $inc: { unlikeCount: req.body.unlikeCount + 1 } }
-            )
+        addRemoveUnlike(post, hasLiked, hasUnliked, req.body.userId, true);
+
+        res.status(200).send("Unliked successfully!!");
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
+const addRemoveLike = async (post, hasLiked, hasUnliked, id, liked) => {
+
+    if (liked === true) {
+        if (!hasLiked && !hasUnliked) {
+            likeUpdatePost(post, id, true);
+
+        } else if (!hasLiked && hasUnliked) {
+            unlikeUpdatePost(post, id, false);
         }
 
-        if (post.likeArray.includes(req.body.userId)) {
-            await Post.update(
-                { $pull: { likeArray: req.body.userId } },
-                { $inc: { likesCount: req.body.likesCount - 1 } }
-            )
+    } else {
+        likeUpdatePost(post, id, false);
+    }
+
+
+    return post;
+}
+
+const addRemoveUnlike = async (post, hasLiked, hasUnliked, id, unliked) => {
+    if (unliked === true) {
+        if (!hasLiked && !hasUnliked) {
+            unlikeUpdatePost(post, id, true)
+
+        } else if (hasLiked && !hasUnliked) {
+            likeUpdatePost(post, id, false);
         }
+
+    } else {
+        unlikeUpdatePost(post, id, false);
+    }
+
+    return post;
+}
+
+const likeUpdatePost = async (post, id, updateId) => {
+    if (updateId) {
+        await post.likeUserId.unshift(id);
+        await post.save();
+        updateLikeCount(post, id, true);
+
+    } else {
+        await post.likeUserId.remove(id);
+        await post.save();
+        updateLikeCount(post, id, false);
+    }
+}
+
+const unlikeUpdatePost = async (post, id, updateId) => {
+    if (updateId) {
+        await post.unlikeUserId.unshift(id);
+        await post.save();
+        updateUnlikeCount(post, id, true);
+        return post;
+
+    } else {
+        await post.unlikeUserId.remove(id);
+        updateUnlikeCount(post, id, false)
+    }
+}
+
+const updateLikeCount = async (post, id, incDecCount) => {
+    if (incDecCount) {
+        post.likesCount += 1;
+        await post.save();
+        return post;
+
+    } else {
+        post.likesCount -= 1;
+        await post.save();
+        unlikeUpdatePost(post, id, true);
+    }
+}
+
+const updateUnlikeCount = async (post, id, incDecCount) => {
+    if (incDecCount) {
+        post.unlikedCount += 1
+        await post.save();
+        return post;
+
+    } else {
+        post.unlikedCount -= 1;
+        await post.save();
+        likeUpdatePost(post, id, true);
+    }
+}
+
+
+// Follow user
+exports.followUser = async function (req, res) {
+    try {
+        if (req.body.userId !== req.params.id) {
+            const user = await Auth.findById(req.params.id);
+            const currentUser = await Auth.findById(req.body.userId);
+
+
+            if (!user.followers.includes(req.body.userId)) {
+
+                await user.updateOne({
+                    $push: { followers: req.body.userId }
+                });
+                await currentUser.updateOne({
+                    $push: { following: req.body.userId }
+                });
+
+                res.status(200).send("user has been followed")
+
+            } else {
+                res.status(403).send("Already following");
+            }
+
+        } else {
+            res.status(400).send("Can't follow yourself");
+        }
+
+    } catch (error) {
+        res.status(500).send(error);
+    }
+}
+
+// Comment on post
+exports.commentOnPost = async function (req, res) {
+    try {
+        const post = await Post.findById({ _id: req.params.id });
+        const object = {
+            id: req.body.userId,
+            comment: req.body.comment
+        };
+
+        await post.comment.unshift(object);
+        await post.save();
+        res.status(200).send("Commented successfully!!");
 
     } catch (error) {
         res.status(500).send(error);

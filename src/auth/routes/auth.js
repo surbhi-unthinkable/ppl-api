@@ -8,6 +8,7 @@ const loginAuth = require("../controllers/login");
 const verificationAuth = require('../controllers/verification');
 const googleSignInAuth = require('../controllers/googleSignIn')
 const forgetPasswordAuth = require("../controllers/forgetPassword");
+const resetPasswordAuth = require('../controllers/resetPassword');
 const { addUserValidation } = require("../validation/userValidation");
 
 // require("../controllers/googleRegister");
@@ -26,6 +27,8 @@ router.post('/google', googleSignInAuth.signIn);
 router.get('/confirmation/:token', verificationAuth.verify);
 router.post('/login', loginAuth.login);
 router.post('/forgetPassword', forgetPasswordAuth.forgetPassword);
+router.get('/resetPassword/:id/:token', resetPasswordAuth.getResetPassword);
+router.post('/resetPassword/:id/:token', resetPasswordAuth.postResetPassword);
 
 // router.get('/', (req, res) => {
 //     res.send("Hey!")

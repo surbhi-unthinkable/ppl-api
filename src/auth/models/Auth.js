@@ -41,6 +41,14 @@ const EmployeeSchema = new mongoose.Schema({
         required: true,
         minlength: 8
     },
+    following: {
+        type: Array,
+        default: []
+    },
+    followers: {
+        type: Array,
+        default: []
+    },
     isVerified: {
         type: Boolean,
         default: false

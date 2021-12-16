@@ -12,7 +12,8 @@ router.put('/uploadprofile/:id', postAuth.uploadProfile);
 router.get('/get/:id', postAuth.getUser);
 router.put('/updatepost/:id', postAuth.updatePost);
 router.put('/like/:id', postAuth.likePost);
-router.put('/dislike/:id', postAuth.dislikePost);
-// router.post('/uploadfiles', postAuth.uplaodFiles);
+router.put('/unlike/:id', postAuth.unlikePost);
+router.put('/follow/:id', postAuth.followUser);
+router.put('/comment/:id', postAuth.commentOnPost);
 
 module.exports = router;
