@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Auth = require('../models/Auth');
@@ -19,14 +20,15 @@ exports.forgetPassword = async function (req, res) {
         // res.send('Password reset link has been sent to your email!!');
 
         // for sending mail
-        const API_KEY = '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';
+        const API_KEY = process.env.API_KEY;
+        console.log(API_KEY);
         sgMail.setApiKey(API_KEY);
 
         const message = {
             to: user.email,
             from: {
                 name: 'Node test',
-                email: 'nodet76@gmail.com'
+                email: 'surbhi.godani10@gmail.com'
             },
             subject: 'Reset Password',
             text: `Hello ${user.firstName}
