@@ -33,7 +33,7 @@ exports.register = async function (req, res) {
         const token = await user.generateAuthToken();
         console.log("token part", token);
 
-        const API_KEY = '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';
+        const API_KEY = process.env.API_KEY;
         sgMail.setApiKey(API_KEY);
 
         const message = {
