@@ -2,9 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const authRouter = require('./src/auth/routes/auth');
-const postRouter = require('./src/auth/routes/post');
+const postRouter = require('./src/post/routes/post');
 const passport = require('passport');
-// const Register = require('./auth/models/Register');
 require('./src/db/conn');
 
 const app = express();
@@ -22,6 +21,7 @@ app.use(passport.session());
 app.use('/auth', authRouter);
 app.use('/post', postRouter);
 
+console.log("uexhgu", process.env.PORT);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, (req, res) => {
     console.log(`Server is litening to port ${PORT}`);

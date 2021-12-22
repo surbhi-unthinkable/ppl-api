@@ -50,4 +50,3 @@ const PostSchema = new mongoose.Schema({
 // creating a collection
 const Post = new mongoose.model('Post', PostSchema);
 module.exports = Post;
-
